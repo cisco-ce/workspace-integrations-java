@@ -55,7 +55,7 @@ This example displays a rating survey on the devices after a call disconnects us
 
 1. The [CallDisconnect](https://roomos.cisco.com/xapi/Event.CallDisconnect) event to detect when a call has ended,
 2. The [UserInterface.Message.Rating.Display](https://roomos.cisco.com/xapi/Command.UserInterface.Message.Rating.Display) command to show a rating dialog on the device user interface and
-3. The [UserInterface.Message.Rating.Respons](https://roomos.cisco.com/xapi/Event.UserInterface.Message.Rating.Response) event to capture the rating.
+3. The [UserInterface.Message.Rating.Response](https://roomos.cisco.com/xapi/Event.UserInterface.Message.Rating.Response) event to capture the rating.
 
 ### Setup
 
