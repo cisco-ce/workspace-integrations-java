@@ -1,0 +1,16 @@
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+target/
+test-output/
+*~
+*.project
+*.settings
+.DS_Store
+*.pkg
+*.msi
+*.log
+.mvn
+contract/dependency-reduced-pom.xml

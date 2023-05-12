@@ -1,0 +1,45 @@
+{
+  "id": "10d8c179-af3b-40ff-9a7a-af3ecd68f281",
+  "manifestVersion": 1,
+  "displayName": "Room capacity monitor",
+  "vendor": "Examples Inc.",
+  "email": "noreply@example.com",
+  "description": "Alerts device if room exceeds capacity",
+  "availability": "org_private",
+  "apiAccess": [
+    {
+      "scope": "spark-admin:devices_read",
+      "access": "required"
+    },
+    {
+      "scope": "spark-admin:workspaces_read",
+      "access": "required"
+    },
+    {
+      "scope": "spark:xapi_statuses",
+      "access": "required"
+    },
+    {
+      "scope": "spark:xapi_commands",
+      "access": "required"
+    }
+  ],
+  "xapiAccess": {
+    "status": [
+      {
+        "path": "RoomAnalytics.PeopleCount.Current",
+        "access": "required"
+      }
+    ],
+    "commands": [
+      {
+        "path": "UserInterface.Message.Alert.Display",
+        "access": "required"
+      }
+    ],
+    "events": []
+  },
+  "provisioning": {
+    "type": "manual"
+  }
+}

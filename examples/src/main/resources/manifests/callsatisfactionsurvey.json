@@ -1,0 +1,40 @@
+{
+  "id": "6cea19fa-de27-4549-b430-160d5ed6718b",
+  "manifestVersion": 1,
+  "displayName": "Call satisfaction survey",
+  "vendor": "Examples Inc.",
+  "email": "noreply@example.com",
+  "description": "Gathers end of call satisfaction rating",
+  "availability": "org_private",
+  "apiAccess": [
+    {
+      "scope": "spark:xapi_commands",
+      "access": "required"
+    },
+    {
+      "scope": "spark-admin:devices_read",
+      "access": "required"
+    }
+  ],
+  "xapiAccess": {
+    "commands": [
+      {
+        "path": "UserInterface.Message.Rating.Display",
+        "access": "required"
+      }
+    ],
+    "events": [
+      {
+        "path": "UserInterface.Message.Rating.Response",
+        "access": "required"
+      },
+      {
+        "path": "CallDisconnect",
+        "access": "required"
+      }
+    ]
+  },
+  "provisioning": {
+    "type": "manual"
+  }
+}

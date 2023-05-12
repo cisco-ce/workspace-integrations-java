@@ -1,0 +1,60 @@
+{
+  "id": "10d8c179-af3b-40ff-9a7b-af3ecd68f281",
+  "manifestVersion": 1,
+  "displayName": "Environmental data",
+  "vendor": "Examples Inc.",
+  "email": "noreply@example.com",
+  "description": "Prints out environmental data received from the devices",
+  "availability": "org_private",
+  "apiAccess": [
+    {
+      "scope": "spark-admin:devices_read",
+      "access": "required"
+    },
+    {
+      "scope": "spark-admin:workspaces_read",
+      "access": "required"
+    },
+    {
+      "scope": "spark:xapi_statuses",
+      "access": "required"
+    }
+  ],
+  "xapiAccess": {
+    "status": [
+      {
+        "path": "RoomAnalytics.AmbientTemperature",
+        "access": "required"
+      },
+      {
+        "path": "RoomAnalytics.AmbientNoise.Level.A",
+        "access": "required"
+      },
+      {
+        "path": "RoomAnalytics.RelativeHumidity",
+        "access": "required"
+      },
+      {
+        "path": "RoomAnalytics.Sound.Level.A",
+        "access": "required"
+      },
+      {
+        "path": "Peripherals.ConnectedDevice[*].RoomAnalytics.AmbientTemperature",
+        "access": "required"
+      },
+      {
+        "path": "Peripherals.ConnectedDevice[*].RoomAnalytics.RelativeHumidity",
+        "access": "required"
+      },
+      {
+        "path": "Peripherals.ConnectedDevice[*].RoomAnalytics.AirQuality.Index",
+        "access": "required"
+      }
+    ],
+    "commands": [],
+    "events": []
+  },
+  "provisioning": {
+    "type": "manual"
+  }
+}
