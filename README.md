@@ -116,7 +116,9 @@ Please be aware of the following limitations:
 
 This SDK is shared _as is_ and with the goal of getting developers quickly introduced to the workspace integrations. If you encounter issues with the library or want changes, please raise Github issues and pull requests. 
 
-The SDK _is not supported by Cisco TAC_. For support reach out to:
+The SDK _is not supported by Cisco TAC_.
+
+For questions or feedback reach out to:
 
 1. Mailer: [workspace-integrations-feedback@cisco.com](mailto:workspace-integrations-feedback@cisco.com) or preferably
 2. Join the `Ask xAPI Devs & Integrations` space on Webex Teams: [https://eurl.io/#rkp76XDrG](https://eurl.io/#rkp76XDrG)
