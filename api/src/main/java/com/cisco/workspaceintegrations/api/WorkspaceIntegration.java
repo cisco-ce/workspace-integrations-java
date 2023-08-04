@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cisco.workspaceintegrations.api.core.HttpJWKSetProvider;
+import com.cisco.workspaceintegrations.api.core.ProvisioningChangedListener;
 import com.cisco.workspaceintegrations.api.core.WebexHttp;
 import com.cisco.workspaceintegrations.api.devices.DevicesApi;
 import com.cisco.workspaceintegrations.api.http.Http;
@@ -40,6 +41,7 @@ public class WorkspaceIntegration {
 
     private final JwtDecoder jwtDecoder;
     private final OAuthClient oauthClient;
+    private final ProvisioningChangedListener provisioningChangedListener;
     private WebexHttp webexHttp;
     private IntegrationApi integrationApi;
     private WorkspacesApi workspacesApi;
@@ -50,13 +52,18 @@ public class WorkspaceIntegration {
     private URI queueUrl;
     private Provisioning provisioning;
 
-    public WorkspaceIntegration(String userAgent, OAuthClient oauthClient) {
-        this(oauthClient, new Http(userAgent));
+    public WorkspaceIntegration(String userAgent,
+                                OAuthClient oauthClient,
+                                ProvisioningChangedListener provisioningChangedListener) {
+        this(oauthClient, new Http(userAgent), provisioningChangedListener);
     }
 
-    public WorkspaceIntegration(OAuthClient oauthClient, Http http) {
+    public WorkspaceIntegration(OAuthClient oauthClient,
+                                Http http,
+                                ProvisioningChangedListener provisioningChangedListener) {
         this.oauthClient = oauthClient;
         this.http = http;
+        this.provisioningChangedListener = provisioningChangedListener;
         this.jwtDecoder = new JwtDecoder(new HttpJWKSetProvider(http));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOG.info("Shutdown detected");
@@ -140,7 +147,7 @@ public class WorkspaceIntegration {
                         + "IntegrationUpdate.builder().queue(enabledQueue()).build()"
                 );
             }
-            queuePoller = new QueuePoller(webexHttp, queueUrl, consumer);
+            queuePoller = new QueuePoller(webexHttp, queueUrl, consumer, provisioningChangedListener, jwtDecoder);
         }
         return queuePoller;
     }
@@ -148,20 +155,21 @@ public class WorkspaceIntegration {
     public QueuePoller getQueuePoller(URI queueUrl, Consumer<List<Message>> consumer) {
         if (queuePoller == null) {
             this.queueUrl = queueUrl;
-            queuePoller = new QueuePoller(webexHttp, queueUrl, consumer);
+            queuePoller = new QueuePoller(webexHttp, queueUrl, consumer, provisioningChangedListener, jwtDecoder);
         }
         return queuePoller;
     }
 
     private InitResult initApis(Provisioning provisioning, IntegrationUpdate initialUpdate) {
         this.provisioning = provisioning;
-        this.webexHttp = new WebexHttp(http, oauthClient, provisioning);
+        this.webexHttp = new WebexHttp(http, oauthClient, provisioning, provisioningChangedListener);
         this.webexHttp.initTokens();
         this.integrationApi = new IntegrationApi(webexHttp);
         this.workspacesApi = new WorkspacesApi(webexHttp);
         this.xapi = new XAPI(webexHttp);
         this.devicesApi = new DevicesApi(webexHttp);
         this.workspaceLocationsApi = new WorkspaceLocationsApi(webexHttp);
+        this.jwtDecoder.setDefaultRegion(provisioning.getRegion());
 
         Integration integration = integrationApi.postUpdate(initialUpdate);
         integration.getQueue().ifPresent(queue -> {

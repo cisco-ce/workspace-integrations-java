@@ -21,19 +21,19 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <root.dir>/</root.dir>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
         <slf4j.version>2.0.7</slf4j.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.1.2-jre</guava.version>
         <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-        <jackson.version>2.15.0</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
         <assertj.version>3.24.2</assertj.version>
-        <testng.version>7.7.1</testng.version>
-        <logback.version>1.4.7</logback.version>
+        <testng.version>7.8.0</testng.version>
+        <logback.version>1.4.8</logback.version>
         <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.7.3</spotbugs-annotations.version>
         <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
         <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
-        <mockito.version>5.3.1</mockito.version>
+        <mockito.version>5.4.0</mockito.version>
         <mvn-shade-plugin.version>3.4.1</mvn-shade-plugin.version>
     </properties>
     <build>

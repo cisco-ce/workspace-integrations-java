@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cisco.workspaceintegrations.api.WorkspaceIntegration;
 import com.cisco.workspaceintegrations.api.WorkspaceIntegration.InitResult;
+import com.cisco.workspaceintegrations.api.core.LogOnlyProvisioningChangedListener;
 import com.cisco.workspaceintegrations.common.actions.Provisioning;
 import com.cisco.workspaceintegrations.common.integration.IntegrationUpdate;
 import com.cisco.workspaceintegrations.common.json.Json;
@@ -35,7 +36,7 @@ public abstract class Example {
     public Example(String name, OAuthClient oAuthClient) {
         this.name = name;
         this.provisioningFile = System.getProperty("java.io.tmpdir") + name + ".tmp";
-        this.integration = new WorkspaceIntegration(getName(), oAuthClient);
+        this.integration = new WorkspaceIntegration(getName(), oAuthClient, new LogOnlyProvisioningChangedListener());
     }
 
     public String getName() {

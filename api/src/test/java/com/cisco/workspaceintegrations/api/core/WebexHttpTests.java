@@ -17,22 +17,27 @@ import static com.cisco.workspaceintegrations.api.utils.MockHttp.mockResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WebexHttpTests {
 
     private WebexHttp webexHttp;
     private MockHttp mockHttp;
+    private ProvisioningChangedListener provisioningChangedListener;
     private ArgumentCaptor<HttpRequest> requestCaptor;
 
     @BeforeMethod
     public void setUp() {
         Provisioning provisioning = mock(Provisioning.class);
+        provisioningChangedListener = mock(ProvisioningChangedListener.class);
         when(provisioning.getRefreshToken()).thenReturn("12345");
         when(provisioning.getOauthUrl()).thenReturn(URI.create("https://integration.webexapis.com/v1/access_token"));
         mockHttp = new MockHttp();
-        webexHttp = new WebexHttp(mockHttp, new OAuthClient("fooClient", "barSecret"), provisioning);
+        webexHttp = new WebexHttp(mockHttp, new OAuthClient("fooClient", "barSecret"),
+                                  provisioning, provisioningChangedListener);
         requestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
     }
 
@@ -59,6 +64,41 @@ public class WebexHttpTests {
         assertThat(barRequest.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/worskpaces/bar"));
         assertThat(barRequest.headers().firstValue("Authorization").get()).isEqualTo("Bearer 123abc");
         assertThat(barRequest.headers().firstValue("Content-Type").get()).isEqualTo("application/json");
+    }
+
+    @Test
+    public void testRefreshTokenChangedIsCalledWhenUpdated() throws Exception {
+        when(mockHttp.getClient().send(requestCaptor.capture(), any())).thenReturn(
+            mockResponse("{ \"access_token\": \"123abc\", \"refresh_token\": \"12345\" }", 200),
+            mockResponse("{}", 200),
+            mockResponse("{}", 401),
+            mockResponse("{ \"access_token\": \"345def\", \"refresh_token\": \"56789\" }", 200),
+            mockResponse("{}", 200)
+        );
+        // Run two requests: the second request should trigger a refreshTokenChanged callback
+        webexHttp.get(URI.create("https://integration.webexapis.com/v1/worskpaces/foo"), Workspace.class);
+        webexHttp.get(URI.create("https://integration.webexapis.com/v1/worskpaces/bar"), Workspace.class);
+
+        HttpRequest initTokenRequest = requestCaptor.getAllValues().get(0);
+        assertThat(initTokenRequest.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/access_token"));
+
+        HttpRequest fooRequest = requestCaptor.getAllValues().get(1);
+        assertThat(fooRequest.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/worskpaces/foo"));
+        assertThat(fooRequest.headers().firstValue("Authorization").get()).isEqualTo("Bearer 123abc");
+
+        HttpRequest barRequest = requestCaptor.getAllValues().get(2);
+        assertThat(barRequest.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/worskpaces/bar"));
+        assertThat(barRequest.headers().firstValue("Authorization").get()).isEqualTo("Bearer 123abc");
+
+        HttpRequest initTokenRequestOn401 = requestCaptor.getAllValues().get(3);
+        assertThat(initTokenRequestOn401.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/access_token"));
+
+        HttpRequest barRequestRetried = requestCaptor.getAllValues().get(4);
+        assertThat(barRequestRetried.uri()).isEqualTo(URI.create("https://integration.webexapis.com/v1/worskpaces/bar"));
+        assertThat(barRequestRetried.headers().firstValue("Authorization").get()).isEqualTo("Bearer 345def");
+        assertThat(barRequestRetried.headers().firstValue("Content-Type").get()).isEqualTo("application/json");
+
+        verify(provisioningChangedListener).refreshTokenChanged(eq("56789"));
     }
 
     @Test

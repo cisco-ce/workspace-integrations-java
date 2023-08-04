@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
@@ -32,12 +33,17 @@ public class WebexHttp {
     private final Provisioning provisioning;
     private volatile OAuthTokens tokens;
     private final ReentrantLock fetchTokensLock;
+    private final ProvisioningChangedListener provisioningChangedListener;
 
-    public WebexHttp(Http http, OAuthClient oAuthClient, Provisioning provisioning) {
+    public WebexHttp(Http http,
+                     OAuthClient oAuthClient,
+                     Provisioning provisioning,
+                     ProvisioningChangedListener provisioningChangedListener) {
         this.http = http;
         this.oAuthClient = oAuthClient;
         this.provisioning = provisioning;
         this.fetchTokensLock = new ReentrantLock();
+        this.provisioningChangedListener = provisioningChangedListener;
     }
 
     public Provisioning getProvisioning() {
@@ -46,6 +52,7 @@ public class WebexHttp {
 
     public void initTokens() {
         if (tokens == null) {
+            boolean refreshTokenChanged = false;
             try {
                 fetchTokensLock.lock();
                 if (tokens != null) {
@@ -54,6 +61,13 @@ public class WebexHttp {
                 tokens = getNewAccessToken();
             } finally {
                 fetchTokensLock.unlock();
+            }
+            if (!Objects.equals(provisioning.getRefreshToken(), tokens.refreshToken())) {
+                try {
+                    provisioningChangedListener.refreshTokenChanged(tokens.refreshToken());
+                } catch (Exception ex) {
+                    LOG.warn("Failure notifying the refresh token change", ex);
+                }
             }
         }
     }

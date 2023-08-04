@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.cisco.workspaceintegrations.api.core.ListResponse;
+import com.cisco.workspaceintegrations.api.core.LogOnlyProvisioningChangedListener;
 import com.cisco.workspaceintegrations.api.devices.DevicesApi;
 import com.cisco.workspaceintegrations.api.devices.DevicesFilter;
 import com.cisco.workspaceintegrations.api.http.HttpException;
@@ -59,7 +60,9 @@ public class ApiLearningTests {
 
     @BeforeMethod
     public void setUp() {
-        integration = new WorkspaceIntegration("E2ETesting", new OAuthClient(clientId, clientSecret));
+        integration = new WorkspaceIntegration("E2ETesting",
+                                               new OAuthClient(clientId, clientSecret),
+                                               new LogOnlyProvisioningChangedListener());
         integration.init(activationJwt, IntegrationUpdate.builder().provisioningState(COMPLETED).queue(enabledQueue()).build());
         integrationApi = integration.getIntegrationApi();
         workspacesApi = integration.getWorkspacesApi();
