@@ -31,10 +31,10 @@ public class WebexHttpTests {
 
     @BeforeMethod
     public void setUp() {
-        Provisioning provisioning = mock(Provisioning.class);
+        Provisioning provisioning = Provisioning.builder()
+                                                .refreshToken("12345")
+                                                .oAuthUrl(URI.create("https://integration.webexapis.com/v1/access_token")).build();
         provisioningChangedListener = mock(ProvisioningChangedListener.class);
-        when(provisioning.getRefreshToken()).thenReturn("12345");
-        when(provisioning.getOauthUrl()).thenReturn(URI.create("https://integration.webexapis.com/v1/access_token"));
         mockHttp = new MockHttp();
         webexHttp = new WebexHttp(mockHttp, new OAuthClient("fooClient", "barSecret"),
                                   provisioning, provisioningChangedListener);
@@ -99,6 +99,7 @@ public class WebexHttpTests {
         assertThat(barRequestRetried.headers().firstValue("Content-Type").get()).isEqualTo("application/json");
 
         verify(provisioningChangedListener).refreshTokenChanged(eq("56789"));
+        assertThat(webexHttp.getProvisioning().getRefreshToken()).isEqualTo("56789");
     }
 
     @Test

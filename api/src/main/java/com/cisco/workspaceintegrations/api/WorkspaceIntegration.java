@@ -75,7 +75,7 @@ public class WorkspaceIntegration {
 
     /**
      * Init from a new activation code. The code is verified and decoded to the provisioning object.
-     * For later inits, the provisioning object should be stored and used.
+     * For later inits, the provisioning object should be securely stored and used.
      *
      * @param activationJwt The activation code from Control Hub
      * @param initialUpdate The update sent to the appUrl

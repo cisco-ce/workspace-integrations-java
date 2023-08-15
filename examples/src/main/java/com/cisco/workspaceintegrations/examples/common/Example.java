@@ -16,10 +16,10 @@ import com.cisco.workspaceintegrations.common.integration.IntegrationUpdate;
 import com.cisco.workspaceintegrations.common.json.Json;
 import com.cisco.workspaceintegrations.common.oauth.OAuthClient;
 
+import static com.cisco.workspaceintegrations.common.Utils.readContentFromFile;
+import static com.cisco.workspaceintegrations.common.Utils.writeProvisioningToFile;
 import static com.cisco.workspaceintegrations.common.integration.ProvisioningState.COMPLETED;
 import static com.cisco.workspaceintegrations.common.integration.Queue.enabledQueue;
-import static com.cisco.workspaceintegrations.examples.common.ExampleUtils.readContentFromFile;
-import static com.cisco.workspaceintegrations.examples.common.ExampleUtils.writeToFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -61,7 +61,7 @@ public abstract class Example {
             String jwt = input.next();
             InitResult initResult = init(jwt);
             try {
-                writeToFile(provisioningFile, Json.toJsonString(initResult.provisioning()));
+                writeProvisioningToFile(provisioningFile, initResult.provisioning());
             } catch (IOException e) {
                 LOG.error("Writing the provisioning file failed");
             }

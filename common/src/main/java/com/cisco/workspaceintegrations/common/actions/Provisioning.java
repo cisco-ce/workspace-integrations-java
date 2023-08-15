@@ -46,6 +46,24 @@ public class Provisioning extends Action {
         this.manifestUrl = manifestUrl;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder copy(Provisioning copy) {
+        Builder builder = new Builder();
+        builder.refreshToken = copy.getRefreshToken();
+        builder.oauthUrl = copy.getOauthUrl();
+        builder.appUrl = copy.getAppUrl();
+        builder.webexApisBaseUrl = copy.getWebexApisBaseUrl();
+        builder.orgName = copy.getOrgName();
+        builder.region = copy.getRegion();
+        builder.scopes = copy.getScopes();
+        builder.xapiAccess = copy.getXapiAccess();
+        builder.manifestUrl = copy.getManifestUrl();
+        return builder;
+    }
+
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -80,5 +98,82 @@ public class Provisioning extends Action {
 
     public URI getManifestUrl() {
         return manifestUrl;
+    }
+
+    public static final class Builder {
+        private String orgId;
+        private String appId;
+        private String refreshToken;
+        private URI oauthUrl;
+        private URI appUrl;
+        private URI webexApisBaseUrl;
+        private String orgName;
+        private String region;
+        private Set<String> scopes;
+        private XapiAccessKeys xapiAccess;
+        private URI manifestUrl;
+
+        private Builder() {
+        }
+
+        public Builder orgId(String val) {
+            orgId = val;
+            return this;
+        }
+
+        public Builder appId(String val) {
+            appId = val;
+            return this;
+        }
+
+        public Builder refreshToken(String val) {
+            refreshToken = val;
+            return this;
+        }
+
+        public Builder oAuthUrl(URI val) {
+            oauthUrl = val;
+            return this;
+        }
+
+        public Builder appUrl(URI val) {
+            appUrl = val;
+            return this;
+        }
+
+        public Builder webexApisBaseUrl(URI val) {
+            webexApisBaseUrl = val;
+            return this;
+        }
+
+        public Builder orgName(String val) {
+            orgName = val;
+            return this;
+        }
+
+        public Builder region(String val) {
+            region = val;
+            return this;
+        }
+
+        public Builder scopes(Set<String> val) {
+            scopes = val;
+            return this;
+        }
+
+        public Builder xapiAccess(XapiAccessKeys val) {
+            xapiAccess = val;
+            return this;
+        }
+
+        public Builder manifestUrl(URI val) {
+            manifestUrl = val;
+            return this;
+        }
+
+        public Provisioning build() {
+            return new Provisioning(orgId, appId, refreshToken, oauthUrl, appUrl, webexApisBaseUrl, orgName, region, scopes,
+                                    xapiAccess, manifestUrl);
+        }
     }
 }

@@ -30,7 +30,7 @@ public class WebexHttp {
 
     private final Http http;
     private final OAuthClient oAuthClient;
-    private final Provisioning provisioning;
+    private Provisioning provisioning;
     private volatile OAuthTokens tokens;
     private final ReentrantLock fetchTokensLock;
     private final ProvisioningChangedListener provisioningChangedListener;
@@ -52,7 +52,6 @@ public class WebexHttp {
 
     public void initTokens() {
         if (tokens == null) {
-            boolean refreshTokenChanged = false;
             try {
                 fetchTokensLock.lock();
                 if (tokens != null) {
@@ -63,6 +62,7 @@ public class WebexHttp {
                 fetchTokensLock.unlock();
             }
             if (!Objects.equals(provisioning.getRefreshToken(), tokens.refreshToken())) {
+                this.provisioning = Provisioning.copy(provisioning).refreshToken(tokens.refreshToken()).build();
                 try {
                     provisioningChangedListener.refreshTokenChanged(tokens.refreshToken());
                 } catch (Exception ex) {
